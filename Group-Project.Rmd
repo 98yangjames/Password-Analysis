@@ -1,0 +1,114 @@
+---
+title: "Group Project"
+author: "Frances Scott-Weis"
+date: "2/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+Set-up
+```{r}
+# Passwords <- read.delim(file = "C:/Users/franc/Downloads/rockyousubset.txt", header = FALSE, sep = "\t", dec = ".")
+#   Passwords <- read.delim(file = "C:/Users/franc/Downloads/rockyousubset.txt", header = FALSE, sep = "\t") %>%  collect()
+  
+Passwords <-   read.csv(file = "C:/Users/franc/Downloads/rockyousubset.csv", 
+                      sep = "\t", header=FALSE) 
+Passwords_list <- Passwords$V1
+
+Passwords %>%  group_by(large = if_else(nchar(V1) > 30, 1, 0)) %>% summarise(n())  
+
+Passwords_corrected <- Passwords %>%  filter(nchar(V1) <= 30) 
+Password_list <- Passwords_corrected$V1
+```
+
+Password Length
+```{r}
+#Length
+lengths = c(1:length(Password_list))
+for (i in 1:length(Password_list)) {
+  lengths[i] <- nchar(Password_list[i])
+}
+hist(lengths, xlim = )
+df <- data.frame(mean = mean(lengths), sd = sd(lengths))
+knitr::kable(df)
+t.test(lengths)
+```
+
+Number of unique characters
+```{r} 
+# Number of unique characters
+uniqchars <- function(x) length(unique(strsplit(x, "")[[1]]))
+length_unique = c(1:length(Password_list))
+for (i in 1:length(Password_list)) {
+  length_unique[i] <- uniqchars(Password_list[i])
+}
+hist(length_unique)
+df <- data.frame(mean = mean(length_unique), sd = sd(length_unique))
+knitr::kable(df)
+t.test(length_unique)
+```
+
+#Number of numbers
+```{r}
+# gsub("[^0-9]+", "", "hello6578")
+lengths_numbers = c(1:length(Password_list))
+for (i in 1:length(Password_list)) {
+  lengths_numbers[i] <- nchar(gsub("[^0-9]+", "", Password_list[i]))
+}
+hist(lengths_numbers)
+df <- data.frame(mean = mean(lengths_numbers), sd = sd(lengths_numbers))
+knitr::kable(df)
+t.test(lengths_numbers)
+```
+
+#Number of symbols
+```{r}
+library(stringr)
+length_symbols = c(1:length(Password_list))
+for (i in 1:length(Password_list)) {
+  symbols_1 <- str_extract_all(Password_list[i], "\\W")
+  symbols_count <- nchar(gsub("[^,]+", "", symbols_1 ))+1
+  length_symbols[i] <- symbols_count
+  } 
+hist(length_symbols)
+df <- data.frame(mean = mean(length_symbols), sd = sd(length_symbols))
+knitr::kable(df)
+t.test(length_symbols)
+```
+
+# Number of symbols and numbers
+```{r}
+library(stringr)
+length_num_symbols = c(1:length(Password_list))
+for (i in 1:length(Password_list)) {
+  symbols_1 <- str_extract_all(Password_list[i], "\\W") 
+  symbols_count <- nchar(gsub("[^,]+", "", symbols_1 ))+1
+  num_count <- nchar(gsub("[^0-9]+", "", Password_list[i]))
+  length_num_symbols[i] <- symbols_count+ num_count
+  } 
+hist(length_num_symbols)
+df <- data.frame(mean = mean(length_num_symbols), sd = sd(length_num_symbols))
+knitr::kable(df)
+t.test(length_num_symbols)
+```
+
+
+#Longest string of repeating sequential characters 
+```{r}
+#!/usr/bin/perl
+use List::Util "reduce";
+my $string = "this aaa and bbbb for ### ## ppppppp";
+my $max = reduce { length($b) > length($a) ? $b : $a } "", 
+                    $string =~ /((.)\2+)/gs;
+print "$max\n";
+```
+
+
+
+ 
+
+
