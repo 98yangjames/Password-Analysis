@@ -1,0 +1,124 @@
+---
+title: "Group Project by Countries"
+author: "Frances Scott-Weis"
+date: "2/23/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+```{r}
+Passwords_all  <- read.csv(file = "C:/Users/franc/Downloads/top_200_password_2020_by_country.csv", header = TRUE) %>%  collect()
+```
+
+```{r} 
+countries = c('United States', 'China', 'Vietnam', 'Spain', 'Russia')
+Passwords <- Passwords_all %>%  filter(country %in%  countries )  %>%  collect() 
+# Passwords_US  <- Passwords %>% filter(country== 'United States')
+# Passwords_China  <- Passwords %>% filter(country== 'China')
+# Passwords_Spain  <- Passwords %>% filter(country== 'Spain')
+# Passwords_Russia  <- Passwords %>% filter(country== 'Russia')
+# Passwords_Vietnam  <- Passwords %>% filter(country== 'Vietnam')
+```
+# Plots of Attributes 
+
+### Length 
+```{r}
+Passwords$Length <- nchar(Passwords$Password)
+
+hist(Passwords$Length, col= "skyblue", main = paste("Histogram of Lengths" ), breaks = 20)
+```
+
+### Distinct characters 
+```{r} 
+uniqchars <- function(x) length(unique(strsplit(x, "")[[1]]))
+
+vec <- Passwords$Password
+length_unique = c(1:length(Passwords$Password))
+for (i in 1:length(Passwords$Password)) {
+  length_unique[i] <- uniqchars(vec[i])
+}
+Passwords$Length_Unique <-  length_unique   
+hist(Passwords$Length_Unique, col= "skyblue", main = paste("Histogram of Number of Unique Characters" ), breaks = 20)
+```
+
+### Number of numbers 
+```{r} 
+vec <- Passwords$Password
+lengths_numbers = c(1:length(vec))
+for (i in 1:length(vec)) {
+  lengths_numbers[i] <- nchar(gsub("[^0-9]+", "", vec[i]))
+}
+Passwords$Length_Numbers <-  lengths_numbers   
+hist(Passwords$Length_Numbers, col= "skyblue", main = paste("Histogram of Number of Numbers" ), breaks = 5)
+```
+
+TODO: Longest string of repeating sequential characters
+
+
+# Attributes by Country 
+
+### Length 
+```{r}
+Passwords %>% group_by(country) %>%  summarise(Avg = mean(Length), SD = sd(Length), Min = min(Length), Max = max(Length) )
+```
+
+### Distinct characters 
+```{r} 
+Passwords %>% group_by(country) %>%  summarise(Avg = mean(Length_Unique), SD = sd(Length_Unique), Min = min(Length_Unique), Max = max(Length_Unique) )
+```
+
+### Number of numbers 
+```{r} 
+Passwords %>% group_by(country) %>%  summarise(Avg = mean(Length_Numbers), SD = sd(Length_Numbers), Min = min(Length_Numbers), Max = max(Length_Numbers) )
+```
+
+TODO: Longest string of repeating sequential characters
+
+# Comparision of Population Means for Attributes Between Countries
+
+### Length: Comparing means between all countries
+```{r}
+Length_US  <- (Passwords %>% filter(country== 'United States'))$Length
+Length_China  <- (Passwords %>% filter(country== 'China'))$Length
+Length_Spain  <- (Passwords %>% filter(country== 'Spain'))$Length
+Length_Russia  <- (Passwords %>% filter(country== 'Russia'))$Length
+Length_Vietnam  <- (Passwords %>% filter(country== 'Vietnam'))$Length
+
+methods=data.frame(x=c(Length_US, Length_China, Length_Spain,Length_Russia,Length_Vietnam ),group=rep(c("Length_US", "Length_China", "Length_Spain", "Length_Russia", "Length_Vietnam"),
+rep(c(length(Length_US), length(Length_China), length(Length_Spain), length(Length_Russia), length(Length_Vietnam)))))
+
+summary(aov(x ~ factor(group), data=methods))
+```
+
+### Length of Unique Characters: Comparing means between all countries
+```{r}
+Length_Unique_US  <- (Passwords %>% filter(country== 'United States'))$Length_Unique
+Length_Unique_China  <- (Passwords %>% filter(country== 'China'))$Length_Unique
+Length_Unique_Spain  <- (Passwords %>% filter(country== 'Spain'))$Length_Unique
+Length_Unique_Russia  <- (Passwords %>% filter(country== 'Russia'))$Length_Unique
+Length_Unique_Vietnam  <- (Passwords %>% filter(country== 'Vietnam'))$Length_Unique
+
+methods=data.frame(x=c(Length_Unique_US, Length_Unique_China, Length_Unique_Spain,Length_Unique_Russia,Length_Unique_Vietnam ),group=rep(c("Length_Unique_US", "Length_Unique_China", "Length_Unique_Spain", "Length_Unique_Russia", "Length_Unique_Vietnam"),
+rep(c(length(Length_Unique_US), length(Length_Unique_China), length(Length_Unique_Spain), length(Length_Unique_Russia), length(Length_Unique_Vietnam)))))
+
+summary(aov(x ~ factor(group), data=methods))
+```
+
+### Number of Numbers: Comparing means between all countries
+```{r}
+Length_Numbers_US  <- (Passwords %>% filter(country== 'United States'))$Length_Numbers
+Length_Numbers_China  <- (Passwords %>% filter(country== 'China'))$Length_Numbers
+Length_Numbers_Spain  <- (Passwords %>% filter(country== 'Spain'))$Length_Numbers
+Length_Numbers_Russia  <- (Passwords %>% filter(country== 'Russia'))$Length_Numbers
+Length_Numbers_Vietnam  <- (Passwords %>% filter(country== 'Vietnam'))$Length_Numbers
+
+methods=data.frame(x=c(Length_Numbers_US, Length_Numbers_China, Length_Numbers_Spain,Length_Numbers_Russia,Length_Numbers_Vietnam ),group=rep(c("Length_Numbers_US", "Length_Numbers_China", "Length_Numbers_Spain", "Length_Numbers_Russia", "Length_Numbers_Vietnam"),
+rep(c(length(Length_Numbers_US), length(Length_Numbers_China), length(Length_Numbers_Spain), length(Length_Numbers_Russia), length(Length_Numbers_Vietnam)))))
+
+summary(aov(x ~ factor(group), data=methods))
+```
+
