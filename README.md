@@ -1,2 +1,7 @@
 # Password-Analysis
-Performing inferential analysis on the Passwords dataset
+Passwords are a ubiquitous yet flawed part in all of our lives. Much energy goes into breaking passwords, often it is a social-engineering problem more than a software one to successfully guess a password but If passwords are so personal, do any trends exist between people of the same language/nationality? Are passwords a microcosm of the differences between our languages, or are they similar across all ethnicities? <br>
+
+To have categories to compare we will also utilize a different dataset from NordPass containing the top 200 passwords from each country, allowing us to analyze how passwords change from country to country, and thus language to language. (https://www.kaggle.com/prasertk/top-200-passwords-by-country-2021). We chose to cover many of the world's most popular languages, English, Chinese, Spanish, and Russian. To round out the list however, we wanted more representation from non-latin based languages, adding Vietnamese to fill this void. An important note however, all passwords displayed in the top 200 passwords by country dataset use latin English characters, this may be pure coincidence, or because NordPass does not report passwords in Chinese / Vietnamese characters, which could be a possible source of error. Despite this, many of the passwords included for a particular language are phonetically typed with latin characters, and thus maintain certain characteristics different from English. <br>
+
+
+
